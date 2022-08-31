@@ -1,13 +1,19 @@
 #include <stdio.h>
+#include <cstdlib>
 
 // mutable array with automatic resizing
 class MyVector {
   // how to store any type?
-  int* array;
-  int vec_size;
-  int vec_capacity;
-
  public:
+  struct vector {
+    int* array;
+    int vec_size;
+    int vec_capacity;
+  } v; // need to allocate one
+
+  // default contor
+  MyVector();
+  ~MyVector();
   int size();      // - number of items
   int capacity();  // - number of items it can hold
   bool is_empty();
@@ -32,13 +38,23 @@ class MyVector {
   // when popping an item, if size is 1/4 of capacity, resize to half
 };
 
+MyVector::MyVector() {
+  v.vec_capacity = 16;
+  v.vec_size = 0;
+  v.array = (int*)malloc(v.vec_capacity * sizeof(int));
+}
+
+MyVector::~MyVector() {
+  free(v.array);
+}
+
 // number of items
-int MyVector::size() { return vec_size; }
+int MyVector::size() { return v.vec_size; }
 // - number of items it can hold
-int MyVector::capacity() { return vec_capacity; }
-bool MyVector::is_empty() { return (vec_size == 0); }
+int MyVector::capacity() { return v.vec_capacity; }
+bool MyVector::is_empty() { return (v.vec_size == 0); }
 // - returns item at given index, blows up if index out of bounds
-int at(int index);
+int at(int index) {}
 void MyVector::push(int item) {}
 // - inserts item at index, shifts that index's value and trailing elements to
 // the right
@@ -53,7 +69,7 @@ void MyVector::delete_item(int index) {}
 void MyVector::remove(int item) {}
 // - looks for value and returns first index with that value, -1 if not found
 int MyVector::find(int item) {}
-void MyVector::resize(int new_capacity) { vec_capacity = new_capacity; }
+void MyVector::resize(int new_capacity) { v.vec_capacity = new_capacity; }
 
 int main() {
   MyVector mv;
@@ -61,7 +77,8 @@ int main() {
 }
 /* [ ] Implement a vector (mutable array with automatic resizing):
 [ ] Practice coding using arrays and pointers, and pointer math to jump to an
-index instead of using indexing. [ ] New raw data array with allocated memory
+index instead of using indexing.
+[ ] New raw data array with allocated memory
 [] can allocate int array under the hood, just not use its features
 [] start with 16, or if starting number is greater, use power of 2 - 16, 32, 64,
 128 [ ] Time
